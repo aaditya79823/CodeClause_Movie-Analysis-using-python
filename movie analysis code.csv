@@ -1,0 +1,80 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Step 1: Load the dataset
+df = pd.read_csv('movies.csv')
+
+# Step 2: Exploratory Data Analysis (EDA)
+# Display the first few rows of the dataset
+print(df.head())
+
+# Check the data types and missing values
+print(df.info())
+
+# Step 3: Movie Genre Analysis
+# Count the number of movies in each genre
+genre_counts = df['Genre'].value_counts()
+
+# Plot the genre distribution
+plt.figure(figsize=(10, 6))
+sns.barplot(x=genre_counts.index, y=genre_counts.values)
+plt.title('Genre Distribution')
+plt.xlabel('Genre')
+plt.ylabel('Count')
+plt.xticks(rotation=90)
+plt.show()
+
+# Step 4: Movie Rating Analysis
+# Calculate the average rating
+average_rating = df['Rating'].mean()
+
+# Plot the rating distribution
+plt.figure(figsize=(8, 6))
+sns.histplot(df['Rating'], kde=True)
+plt.title('Rating Distribution')
+plt.xlabel('Rating')
+plt.ylabel('Count')
+plt.show()
+
+# Step 5: Movie Revenue Analysis
+# Sort the movies by revenue in descending order
+top_revenue_movies = df.sort_values('Revenue', ascending=False).head(10)
+
+# Plot the top revenue movies
+plt.figure(figsize=(12, 6))
+sns.barplot(x='Title', y='Revenue', data=top_revenue_movies)
+plt.title('Top 10 Movies by Revenue')
+plt.xlabel('Movie Title')
+plt.ylabel('Revenue (in billions)')
+plt.xticks(rotation=90)
+plt.show()
+
+# Step 6: Sentiment Analysis (Example using movie reviews)
+from nltk.sentiment import SentimentIntensityAnalyzer
+
+# Create a SentimentIntensityAnalyzer object
+sid = SentimentIntensityAnalyzer()
+
+# Perform sentiment analysis on movie reviews
+df['Sentiment'] = df['Review'].apply(lambda x: sid.polarity_scores(x)['compound'])
+
+# Step 7: Visualizations
+# Plot sentiment distribution
+plt.figure(figsize=(8, 6))
+sns.histplot(df['Sentiment'], kde=True)
+plt.title('Sentiment Distribution')
+plt.xlabel('Sentiment Score')
+plt.ylabel('Count')
+plt.show()
+
+# Step 8: Statistical Analysis (Example using t-test)
+from scipy.stats import ttest_ind
+
+# Perform a t-test to compare ratings between two genres (e.g., Action and Drama)
+action_ratings = df[df['Genre'] == 'Action']['Rating']
+drama_ratings = df[df['Genre'] == 'Drama']['Rating']
+
+t_stat, p_value = ttest_ind(action_ratings, drama_ratings)
+print('T-Statistic:', t_stat)
+print('P-Value:', p_value)
